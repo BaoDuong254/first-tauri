@@ -5,7 +5,7 @@ export async function checkForUpdates() {
   try {
     const update = await check();
     if (!update) {
-      console.log("no update available");
+      window.alert("No updates available");
       return;
     }
 
@@ -42,6 +42,6 @@ export async function checkForUpdates() {
     console.log("update installed");
     await relaunch();
   } catch (error) {
-    console.warn("failed to check for updates", error);
+    window.alert(`Failed to update: ${error}`);
   }
 }
