@@ -1,4 +1,7 @@
 mod command;
+mod todo;
+
+use std::sync::Mutex;
 
 use tauri::{
     menu::{Menu, MenuItem},
@@ -12,8 +15,18 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![command::greet])
+        .plugin(tauri_plugin_store::Builder::new().build())
+        .invoke_handler(tauri::generate_handler![
+            command::greet,
+            todo::list_todos,
+            todo::add_todo,
+            todo::toggle_todo,
+            todo::delete_todo
+        ])
         .setup(|app| {
+            let loaded = todo::load(app.handle());
+            app.manage(todo::TodoState(Mutex::new(loaded)));
+
             let show_item = MenuItem::with_id(app, "show", "Hiển thị", true, None::<&str>)?;
             let quit_item = MenuItem::with_id(app, "quit", "Thoát", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show_item, &quit_item])?;
