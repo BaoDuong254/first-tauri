@@ -1,11 +1,13 @@
 import { check } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { getVersion } from "@tauri-apps/api/app";
 
 export async function checkForUpdates() {
   try {
+    const currentVersion = await getVersion();
     const update = await check();
     if (!update) {
-      window.alert("No updates available");
+      window.alert(`No updates available (current version: ${currentVersion})`);
       return;
     }
 
