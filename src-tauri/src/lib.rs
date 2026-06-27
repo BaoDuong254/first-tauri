@@ -1,4 +1,6 @@
 mod command;
+mod error;
+mod quote;
 mod todo;
 
 use std::sync::Mutex;
@@ -18,6 +20,7 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
             command::greet,
+            quote::fetch_quote,
             todo::list_todos,
             todo::add_todo,
             todo::toggle_todo,

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 import { checkForUpdates } from "./Updater";
+import QuoteCard from "./QuoteCard";
 import TodoList from "./TodoList";
 import ThemeToggle from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -60,6 +61,8 @@ function App() {
             </Button>
           </CardContent>
         </Card>
+
+        <QuoteCard />
 
         <TodoList />
       </div>
