@@ -1,49 +1,70 @@
-import { check } from "@tauri-apps/plugin-updater";
+import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { getVersion } from "@tauri-apps/api/app";
+import { toast } from "sonner";
 
-export async function checkForUpdates() {
+export async function checkForUpdates({
+  silent = false,
+}: { silent?: boolean } = {}) {
   try {
     const currentVersion = await getVersion();
     const update = await check();
     if (!update) {
-      window.alert(`No updates available (current version: ${currentVersion})`);
+      if (!silent) {
+        toast.info("No updates available", {
+          description: `You're on the latest version (${currentVersion}).`,
+        });
+      }
       return;
     }
 
-    console.log(
-      `found update ${update.version} from ${update.date} with notes ${update.body}`,
-    );
-
-    const shouldInstall = window.confirm(
-      `A new version (${update.version}) is available.\n\n${update.body ?? ""}\n\nDo you want to update and restart now?`,
-    );
-    if (!shouldInstall) {
-      console.log("user declined update");
-      return;
+    toast(`A new version (${update.version}) is available`, {
+      description: update.body ?? undefined,
+      duration: Infinity,
+      action: {
+        label: "Update & restart",
+        onClick: () => installUpdate(update),
+      },
+    });
+  } catch (error) {
+    if (!silent) {
+      toast.error("Failed to check for updates", {
+        description: String(error),
+      });
     }
+  }
+}
 
+async function installUpdate(update: Update) {
+  const toastId = toast.loading("Downloading update...");
+  try {
     let downloaded = 0;
     let contentLength = 0;
     await update.downloadAndInstall((event) => {
       switch (event.event) {
         case "Started":
-          contentLength = event.data.contentLength!;
-          console.log(`started downloading ${event.data.contentLength} bytes`);
+          contentLength = event.data.contentLength ?? 0;
           break;
-        case "Progress":
+        case "Progress": {
           downloaded += event.data.chunkLength;
-          console.log(`downloaded ${downloaded} from ${contentLength}`);
+          const percent = contentLength
+            ? Math.round((downloaded / contentLength) * 100)
+            : 0;
+          toast.loading(`Downloading update... ${percent}%`, { id: toastId });
           break;
+        }
         case "Finished":
-          console.log("download finished");
+          toast.loading("Installing update...", { id: toastId });
           break;
       }
     });
 
-    console.log("update installed");
+    toast.success("Update installed. Restarting...", { id: toastId });
     await relaunch();
   } catch (error) {
-    window.alert(`Failed to update: ${error}`);
+    toast.error("Failed to update", {
+      id: toastId,
+      description: String(error),
+    });
   }
 }

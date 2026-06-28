@@ -16,7 +16,7 @@ function App() {
   const [name, setName] = useState("");
 
   useEffect(() => {
-    checkForUpdates();
+    checkForUpdates({ silent: true });
   }, []);
 
   async function greet() {
