@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 import { checkForUpdates } from "./Updater";
 import QuoteCard from "./QuoteCard";
+import SystemMonitor from "./SystemMonitor";
 import TodoList from "./TodoList";
 import ThemeToggle from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,8 @@ function App() {
         </Card>
 
         <QuoteCard />
+
+        <SystemMonitor />
 
         <TodoList />
       </div>

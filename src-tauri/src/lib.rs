@@ -1,6 +1,7 @@
 mod command;
 mod error;
 mod quote;
+mod system;
 mod todo;
 
 use std::sync::Mutex;
@@ -29,6 +30,8 @@ pub fn run() {
         .setup(|app| {
             let loaded = todo::load(app.handle());
             app.manage(todo::TodoState(Mutex::new(loaded)));
+
+            system::start_monitor(app.handle().clone());
 
             let show_item = MenuItem::with_id(app, "show", "Hiển thị", true, None::<&str>)?;
             let quit_item = MenuItem::with_id(app, "quit", "Thoát", true, None::<&str>)?;
