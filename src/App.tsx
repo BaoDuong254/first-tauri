@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 import { checkForUpdates } from "./Updater";
+import HashCard from "./HashCard";
 import QuoteCard from "./QuoteCard";
 import SystemMonitor from "./SystemMonitor";
 import TodoList from "./TodoList";
@@ -66,6 +67,8 @@ function App() {
         <QuoteCard />
 
         <SystemMonitor />
+
+        <HashCard />
 
         <TodoList />
       </div>

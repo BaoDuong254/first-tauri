@@ -1,5 +1,6 @@
 mod command;
 mod error;
+mod hasher;
 mod quote;
 mod system;
 mod todo;
@@ -19,9 +20,11 @@ pub fn run() {
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             command::greet,
             quote::fetch_quote,
+            hasher::hash_file,
             todo::list_todos,
             todo::add_todo,
             todo::toggle_todo,

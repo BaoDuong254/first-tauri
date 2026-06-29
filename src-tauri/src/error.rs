@@ -5,6 +5,12 @@ pub enum Error {
     #[error("network request failed: {0}")]
     Http(#[from] reqwest::Error),
 
+    #[error("file error: {0}")]
+    Io(#[from] std::io::Error),
+
+    #[error("background task failed")]
+    Task,
+
     #[allow(dead_code)]
     #[error("the quote service returned no quotes")]
     Empty,
