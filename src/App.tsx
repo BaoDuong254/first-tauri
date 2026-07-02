@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 import { checkForUpdates } from "./Updater";
 import HashCard from "./HashCard";
+import NotesCard from "./NotesCard";
 import QuoteCard from "./QuoteCard";
 import SystemMonitor from "./SystemMonitor";
 import TodoList from "./TodoList";
@@ -71,6 +72,8 @@ function App() {
         <HashCard />
 
         <TodoList />
+
+        <NotesCard />
       </div>
     </main>
   );

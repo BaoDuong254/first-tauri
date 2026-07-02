@@ -8,6 +8,9 @@ pub enum Error {
     #[error("file error: {0}")]
     Io(#[from] std::io::Error),
 
+    #[error("database error: {0}")]
+    Db(#[from] rusqlite::Error),
+
     #[error("background task failed")]
     Task,
 

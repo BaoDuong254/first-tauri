@@ -1,6 +1,7 @@
 mod command;
 mod error;
 mod hasher;
+mod note;
 mod quote;
 mod system;
 mod todo;
@@ -28,11 +29,17 @@ pub fn run() {
             todo::list_todos,
             todo::add_todo,
             todo::toggle_todo,
-            todo::delete_todo
+            todo::delete_todo,
+            note::list_notes,
+            note::add_note,
+            note::update_note,
+            note::delete_note
         ])
         .setup(|app| {
             let loaded = todo::load(app.handle());
             app.manage(todo::TodoState(Mutex::new(loaded)));
+
+            app.manage(note::NoteState(Mutex::new(note::init(app.handle())?)));
 
             system::start_monitor(app.handle().clone());
 
