@@ -5,6 +5,7 @@ mod note;
 mod quote;
 mod system;
 mod todo;
+mod watcher;
 
 use std::sync::Mutex;
 
@@ -33,13 +34,17 @@ pub fn run() {
             note::list_notes,
             note::add_note,
             note::update_note,
-            note::delete_note
+            note::delete_note,
+            watcher::start_watch,
+            watcher::stop_watch
         ])
         .setup(|app| {
             let loaded = todo::load(app.handle());
             app.manage(todo::TodoState(Mutex::new(loaded)));
 
             app.manage(note::NoteState(Mutex::new(note::init(app.handle())?)));
+
+            app.manage(watcher::WatcherState(Mutex::new(None)));
 
             system::start_monitor(app.handle().clone());
 

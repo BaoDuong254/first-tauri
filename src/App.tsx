@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 import { checkForUpdates } from "./Updater";
+import FsWatcherCard from "./FsWatcherCard";
 import HashCard from "./HashCard";
 import NotesCard from "./NotesCard";
 import QuoteCard from "./QuoteCard";
@@ -70,6 +71,8 @@ function App() {
         <SystemMonitor />
 
         <HashCard />
+
+        <FsWatcherCard />
 
         <TodoList />
 

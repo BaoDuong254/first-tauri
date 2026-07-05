@@ -11,6 +11,9 @@ pub enum Error {
     #[error("database error: {0}")]
     Db(#[from] rusqlite::Error),
 
+    #[error("watch error: {0}")]
+    Notify(#[from] notify::Error),
+
     #[error("background task failed")]
     Task,
 
