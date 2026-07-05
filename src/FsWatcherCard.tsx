@@ -34,6 +34,8 @@ function FsWatcherCard() {
   async function stop() {
     await invoke("stop_watch");
     setWatching(false);
+    setFiles([]);
+    setLog([]);
   }
 
   return (
