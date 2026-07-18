@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { toast } from "sonner";
 import { Check, Pencil, Plus, X } from "lucide-react";
 
@@ -30,9 +31,16 @@ function NotesCard() {
   const [editBody, setEditBody] = useState("");
 
   useEffect(() => {
-    invoke<Note[]>("list_notes")
-      .then(setNotes)
-      .catch((e) => toast.error(String(e)));
+    function reload() {
+      invoke<Note[]>("list_notes")
+        .then(setNotes)
+        .catch((e) => toast.error(String(e)));
+    }
+    reload();
+    const unlisten = listen("note-added", reload);
+    return () => {
+      unlisten.then((fn) => fn());
+    };
   }, []);
 
   async function addNote() {

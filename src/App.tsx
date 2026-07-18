@@ -31,7 +31,18 @@ function App() {
       <div className="mx-auto flex max-w-md flex-col gap-6 px-4 py-8">
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">first-tauri</h1>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => invoke("toggle_quick_note")}
+              title="Hoặc nhấn Ctrl+Shift+N ở bất kỳ đâu"
+            >
+              Quick Note
+            </Button>
+            <ThemeToggle />
+          </div>
         </header>
 
         <Card>

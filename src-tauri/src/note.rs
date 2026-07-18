@@ -67,9 +67,7 @@ pub fn list_notes(state: State<'_, NoteState>) -> Result<Vec<Note>, Error> {
     Ok(notes)
 }
 
-#[tauri::command]
-pub fn add_note(title: String, body: String, state: State<'_, NoteState>) -> Result<Note, Error> {
-    let conn = state.0.lock().unwrap();
+pub fn insert_note(conn: &Connection, title: &str, body: &str) -> Result<Note, Error> {
     let ts = now();
     conn.execute(
         "INSERT INTO notes (title, body, created_at, updated_at) VALUES (?1, ?2, ?3, ?3)",
@@ -77,11 +75,17 @@ pub fn add_note(title: String, body: String, state: State<'_, NoteState>) -> Res
     )?;
     Ok(Note {
         id: conn.last_insert_rowid(),
-        title,
-        body,
+        title: title.to_string(),
+        body: body.to_string(),
         created_at: ts,
         updated_at: ts,
     })
+}
+
+#[tauri::command]
+pub fn add_note(title: String, body: String, state: State<'_, NoteState>) -> Result<Note, Error> {
+    let conn = state.0.lock().unwrap();
+    insert_note(&conn, &title, &body)
 }
 
 #[tauri::command]

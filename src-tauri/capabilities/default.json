@@ -3,10 +3,12 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": [
-    "main"
+    "main",
+    "quicknote"
   ],
   "permissions": [
     "core:default",
+    "core:window:allow-close",
     "opener:default",
     "dialog:default"
   ]

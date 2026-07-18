@@ -2,6 +2,7 @@ mod command;
 mod error;
 mod hasher;
 mod note;
+mod quicknote;
 mod quote;
 mod system;
 mod todo;
@@ -49,7 +50,9 @@ pub fn run() {
             note::update_note,
             note::delete_note,
             watcher::start_watch,
-            watcher::stop_watch
+            watcher::stop_watch,
+            quicknote::toggle_quick_note,
+            quicknote::save_quick_note
         ])
         .setup(|app| {
             let loaded = todo::load(app.handle());
@@ -60,6 +63,26 @@ pub fn run() {
             app.manage(watcher::WatcherState(Mutex::new(None)));
 
             system::start_monitor(app.handle().clone());
+
+            #[cfg(desktop)]
+            {
+                use tauri_plugin_global_shortcut::{
+                    Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState,
+                };
+
+                let shortcut = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyN);
+                let handle = app.handle().clone();
+                app.handle().plugin(
+                    tauri_plugin_global_shortcut::Builder::new()
+                        .with_handler(move |_app, sc, event| {
+                            if sc == &shortcut && event.state() == ShortcutState::Pressed {
+                                quicknote::open_quick_note(&handle);
+                            }
+                        })
+                        .build(),
+                )?;
+                app.global_shortcut().register(shortcut)?;
+            }
 
             let show_item = MenuItem::with_id(app, "show", "Hiển thị", true, None::<&str>)?;
             let quit_item = MenuItem::with_id(app, "quit", "Thoát", true, None::<&str>)?;
@@ -99,8 +122,11 @@ pub fn run() {
         })
         .on_window_event(|window, event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
-                api.prevent_close();
-                let _ = window.hide();
+                // Chỉ cửa sổ chính mới ẩn xuống tray; popup phải đóng được bình thường.
+                if window.label() == "main" {
+                    api.prevent_close();
+                    let _ = window.hide();
+                }
             }
         })
         .run(tauri::generate_context!())
